@@ -6,7 +6,9 @@ import SetColor from "@/app/Components/Product/SetColor";
 import SetQuantity from "@/app/Components/Product/SetQuantity";
 import { useCart } from "@/hooks/useCart";
 import { Rating } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import {MdCheckCircle} from "react-icons/md"
 
 interface ProductDetailsProps {
     product: any
@@ -34,7 +36,11 @@ const Horizontal = () => {
 }
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
-    const {handleAddProductCart, cartProducts} = useCart();    
+    const { handleAddProductCart, cartProducts } = useCart();
+
+    const [isProductInCart, setIsProductInCart] = useState(false);
+
+    console.log(cartProducts);
     const [cartProduct, setCartProduct] = useState<CartProductType>({
         id: product.id,
         name: product.name,
@@ -46,6 +52,19 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
         price: product.price,
     });
 
+    const router = useRouter();
+
+    useEffect(() => {
+        setIsProductInCart(false);
+
+        if (cartProducts) {
+            const existingIndex = cartProducts.findIndex((item) => item.id === product.id);
+
+            if (existingIndex > -1) {
+                setIsProductInCart(true);
+            }
+        }
+    }, [cartProducts])
 
     const productRating = product.reviews.reduce((acc: number, item: any) => item.rating + acc, 0) / product.reviews.length
 
@@ -77,7 +96,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
     }, [cartProduct]);
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:mt-8">
             <ProductImage cartProduct={cartProduct} product={product} handleColorSelect={handleColorSelect}></ProductImage>
             <div className="flex flex-col gap-1 text-slate-500 text-sm">
                 <h2 className="text-3xl font-medium text-slate-700">{product.name}</h2>
@@ -103,21 +122,38 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                     {product.inStock ? 'In stock' : 'Out of stock'}
                 </div>
                 <Horizontal></Horizontal>
-                <SetColor
-                    cartProduct={cartProduct}
-                    images={product.images}
-                    handleColorSelect={handleColorSelect}
-                ></SetColor>
-                <Horizontal></Horizontal>
-                <SetQuantity
-                    cartProduct={cartProduct}
-                    handleQtyDecrease={handleQtyDecrease}
-                    handleQtyIncrease={handleQtyIncrease}
-                ></SetQuantity>
-                <Horizontal></Horizontal>
-                <div className="max-w-[300px]">
-                    <Button onClick={() => handleAddProductCart(cartProduct)} label="Add To Cart"></Button>
-                </div>
+                {isProductInCart ? <><p className="mb-2 mt-3 text-slate-500 flex items-center gap-1">
+                    <MdCheckCircle size={20} className="text-teal-400"></MdCheckCircle>
+                    <span>Product added to cart</span>
+                    </p>
+                    
+                    <div className="max-w-[300px]">
+                        <Button 
+                        label="View Cart"
+                        outline
+                        onClick={() => {
+                           router.push("/cart") 
+                        }}
+                        ></Button>
+                    </div>
+                    </> :
+                    <>
+                        <SetColor
+                            cartProduct={cartProduct}
+                            images={product.images}
+                            handleColorSelect={handleColorSelect}
+                        ></SetColor>
+                        <Horizontal></Horizontal>
+                        <SetQuantity
+                            cartProduct={cartProduct}
+                            handleQtyDecrease={handleQtyDecrease}
+                            handleQtyIncrease={handleQtyIncrease}
+                        ></SetQuantity>
+                        <Horizontal></Horizontal>
+                        <div className="max-w-[300px]">
+                            <Button onClick={() => handleAddProductCart(cartProduct)} label="Add To Cart"></Button>
+                        </div>
+                    </>}
             </div>
         </div>
     );
