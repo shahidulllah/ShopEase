@@ -1,9 +1,13 @@
+import Container from "../Components/Container";
+import CartClient from "./CartClient";
 
 
 const page = () => {
     return (
-        <div>
-            This is cart page
+        <div className="pt-8 min-h-screen">
+            <Container>
+                <CartClient/>
+            </Container>
         </div>
     );
 };
