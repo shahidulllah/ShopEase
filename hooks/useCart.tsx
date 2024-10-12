@@ -2,10 +2,10 @@ import { CartProductType } from "@/app/product/[productId]/ProductDetails";
 import { error } from "console";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { product } from "../../utils/procuct";
 
 type CartContextType = {
     cartTotalQty: number;
+    cartTotalAmount: number;
     cartProducts: CartProductType[] | null;
     handleAddProductCart: (product: CartProductType) => void;
     handleRemoveProductFromCart: (product: CartProductType) => void;
@@ -23,6 +23,7 @@ interface Props{
 export const CartContextProvider = (props: Props) => {
     const [cartProducts, setCartProducts] = useState<CartProductType[] | null>(null);
     const [cartTotalQty, setCartTotalQty] = useState(0);
+    const [cartTotalAmount, setCartTotalAmount] = useState(0)
 
     useEffect(() => {
         const cartItems: any = localStorage.getItem("shopEaseCartItems")
@@ -31,15 +32,37 @@ export const CartContextProvider = (props: Props) => {
        setCartProducts(cProducts)
     }, [])
 
-    const handleAddProductCart = useCallback(( procuct: CartProductType) =>{
+    useEffect(() => {
+        const getTotals = () => {
+            if(cartProducts) {
+                const {total, qty} = cartProducts?.reduce((acc, item) => {
+                    const itemTotal = item.price * item.quantity
+    
+                    acc.total += itemTotal;
+                    acc.qty += item.quantity;
+    
+                    return acc;
+                }, {
+                    total: 0,
+                    qty: 0 
+                })
+
+                setCartTotalQty(qty)
+                setCartTotalAmount(total)
+            }
+        }
+        getTotals()
+    }, [cartProducts])
+
+    const handleAddProductCart = useCallback(( product: CartProductType) =>{
         setCartProducts((prev) => {
             let updatedCart;
 
             if(prev){
-                updatedCart = [...prev, procuct];
+                updatedCart = [...prev, product];
             } 
             else{
-                updatedCart = [procuct]
+                updatedCart = [product]
             }
 
             toast.success('Product added to card')
@@ -49,7 +72,7 @@ export const CartContextProvider = (props: Props) => {
         })
     }, []);
 
-    const handleRemoveProductFromCart = useCallback(( procuct: CartProductType) =>{
+    const handleRemoveProductFromCart = useCallback(( product: CartProductType) =>{
        if(cartProducts){
         const filteredProducts = cartProducts.filter((item)=> {
             return item.id !== product.id
@@ -59,6 +82,7 @@ export const CartContextProvider = (props: Props) => {
         localStorage.setItem ('shopEaseCartItems', JSON.stringify(filteredProducts));
        }
     }, [cartProducts]);
+
 
     const handleCartQtyIncrease = useCallback((product: CartProductType) => {
         let updatedCart;
@@ -109,6 +133,7 @@ export const CartContextProvider = (props: Props) => {
 
     const value = {
         cartTotalQty,
+        cartTotalAmount,
         cartProducts,
         handleAddProductCart,
         handleRemoveProductFromCart,

@@ -1,8 +1,8 @@
 import Image from 'next/image'
 import Container from './Components/Container'
 import HomeBanner from './Components/Home/HomeBanner'
-import {products} from '../../utils/products'
-import {truncateText} from '../../utils/truncateText'
+import {products} from '../utils/products'
+import {truncateText} from '../utils/truncateText'
 import ProductCard from './Components/Product/ProductCard'
  
 
