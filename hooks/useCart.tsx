@@ -11,7 +11,8 @@ type CartContextType = {
     handleRemoveProductFromCart: (product: CartProductType) => void;
     handleCartQtyIncrease: (product: CartProductType) => void;
     handleCartQtyDecrease: (product: CartProductType) => void;
-}
+    handleClearCart: () => void
+};
 
 export const CartContext = createContext<CartContextType | null>(null);
 
@@ -21,7 +22,7 @@ interface Props{
 
 export const CartContextProvider = (props: Props) => {
     const [cartProducts, setCartProducts] = useState<CartProductType[] | null>(null);
-    const [cartTotalQty, setCartQty] = useState(0);
+    const [cartTotalQty, setCartTotalQty] = useState(0);
 
     useEffect(() => {
         const cartItems: any = localStorage.getItem("shopEaseCartItems")
@@ -98,13 +99,22 @@ export const CartContextProvider = (props: Props) => {
         }
     }, [cartProducts]);
 
+
+    const handleClearCart = useCallback(() => {
+        setCartProducts(null)
+        setCartTotalQty(0)
+
+        localStorage.setItem('shopEaseCartItems', JSON.stringify(null))
+    }, [])
+
     const value = {
         cartTotalQty,
         cartProducts,
         handleAddProductCart,
         handleRemoveProductFromCart,
         handleCartQtyIncrease,
-        handleCartQtyDecrease
+        handleCartQtyDecrease,
+        handleClearCart
     }
 
     return <CartContext.Provider value={value} {...props} />
