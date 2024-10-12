@@ -64,7 +64,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                 setIsProductInCart(true);
             }
         }
-    }, [cartProducts])
+    }, [cartProducts, product.id])
 
     const productRating = product.reviews.reduce((acc: number, item: any) => item.rating + acc, 0) / product.reviews.length
 
@@ -73,7 +73,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
             return { ...prev, selectedImg: value };
         })
     },
-        [cartProduct.selectedImg])
+        [])
 
     const handleQtyIncrease = useCallback(() => {
         if (cartProduct.quantity === 99) {
