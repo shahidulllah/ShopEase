@@ -2,11 +2,13 @@ import { CartProductType } from "@/app/product/[productId]/ProductDetails";
 import { error } from "console";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { product } from "../../utils/procuct";
 
 type CartContextType = {
     cartTotalQty: number;
     cartProducts: CartProductType[] | null;
     handleAddProductCart: (product: CartProductType) => void;
+    handleRemoveProductFromCart: (product: CartProductType) => void;
 }
 
 export const CartContext = createContext<CartContextType | null>(null);
@@ -44,10 +46,23 @@ export const CartContextProvider = (props: Props) => {
         })
     }, []);
 
+    const handleRemoveProductFromCart = useCallback(( procuct: CartProductType) =>{
+       if(cartProducts){
+        const filteredProducts = cartProducts.filter((item)=> {
+            return item.id !== product.id
+        })
+        setCartProducts(filteredProducts)
+        toast.success('Product removed')
+        localStorage.setItem ('shopEaseCartItems', JSON.stringify(filteredProducts));
+       }
+    }, [cartProducts]);
+
+
     const value = {
         cartTotalQty,
         cartProducts,
-        handleAddProductCart
+        handleAddProductCart,
+        handleRemoveProductFromCart
     }
 
     return <CartContext.Provider value={value} {...props} />
