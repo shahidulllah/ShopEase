@@ -5,6 +5,7 @@ import Link from "next/link";
 import { MdArrowBack } from "react-icons/md";
 import Heading from "../Components/Heading";
 import Button from "../Components/Button";
+import ItemContent from "./ItemContent";
 
 const CartClient = () => {
     const { cartProducts } = useCart();
@@ -36,7 +37,7 @@ const CartClient = () => {
             <div>
                 {
                     cartProducts && cartProducts.map((item) => {
-                        return <div key={item.id}>{item.name}</div>
+                        return <ItemContent key={item.id} item={item}/>
                     })
                 }
             </div>
