@@ -2,7 +2,7 @@ import Container from "../Components/Container";
 import CartClient from "./CartClient";
 
 
-const page = () => {
+const CartPage = () => {
     return (
         <div className="pt-8 min-h-screen">
             <Container>
@@ -12,4 +12,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default CartPage;

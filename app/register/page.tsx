@@ -2,7 +2,7 @@ import Container from "../Components/Container";
 import FormWrap from "../Components/FormWrap";
 import RegisterForm from "./RegisterForm";
 
-const page = () => {
+const RegisterPage = () => {
     return (
         <Container>
             <FormWrap>
@@ -12,4 +12,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default RegisterPage;
