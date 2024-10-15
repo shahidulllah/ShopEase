@@ -36,17 +36,19 @@ const RegisterForm = () => {
                     email: data.email,
                     password: data.password,
                     redirect: false,
-                }).then((callback) => {
-                    if (callback?.ok) {
-                        router.push('/cart');
-                        router.refresh();
-                        toast.success('Logged In')
-                    }
-
-                    if (callback?.error) {
-                        toast.error(callback.error);
-                    }
                 })
+                    .then((callback) => {
+                        if (callback?.ok) {
+                            router.push('/cart');
+                            router.refresh();
+                            toast.success('Logged In')
+                        }
+
+                        if (callback?.error) {
+                            console.log("Sign-in error:", callback.error);
+                            toast.error(callback.error);
+                        }
+                    })
             })
             .catch(() => toast.error('Something went wrong'))
             .finally(() => {
