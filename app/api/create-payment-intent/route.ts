@@ -47,13 +47,15 @@ export async function POST(request: Request) {
             const [existing_order, update_order] = await Promise.all([
                 prisma.order.findFirst({
                     where: {
-                        paymentIntentId: payment_intent_id
-                    },
+                        paymentIntentId: payment_intent_id},
+                }),
+                prisma.order.update({
+                    where: {paymentIntentId: payment_intent_id},
                     data: {
                         amount: total,
                         products: items,
-                    },
-                }),
+                    }
+                })
             ]);
 
             if (!existing_order) {
