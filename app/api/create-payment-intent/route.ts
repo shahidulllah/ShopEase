@@ -3,6 +3,8 @@ import { CartProductType } from "@/app/product/[productId]/ProductDetails"
 import { prisma } from "@/libs/prismadb"
 import { NextResponse } from "next/server"
 import Stripe from "stripe"
+
+
 const stripe = new Stripe(process.env.STRIPE_SECTRET_KEY as string, {
     apiVersion: '2024-09-30.acacia'
 })
