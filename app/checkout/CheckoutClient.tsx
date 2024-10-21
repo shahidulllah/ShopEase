@@ -22,7 +22,7 @@ const CheckoutClient = () => {
             setLoading(true);
             setError(false);
 
-            fetch('/api/create-intent', {
+            fetch('/api/create-payment-intent', {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
