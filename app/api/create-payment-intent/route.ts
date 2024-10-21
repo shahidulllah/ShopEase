@@ -15,7 +15,7 @@ const calculateOrderAmount = (items: CartProductType[]) => {
 
         return acc + itemTotal;
     }, 0)
-
+    
     return totalPrice;
 }
 
