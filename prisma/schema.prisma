@@ -59,7 +59,7 @@ model Order {
   createdAt       DateTime          @default(now())
   paymentIntentId String            @unique
   products        CartProductType[]
-  adress          Adress?
+  address          Address?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -81,13 +81,13 @@ type Image{
   image String
 }
 
-type Adress{
+type Address{
   city String
   country String
   line1 String
-  line2 String?
-  postal_code String
-  state String
+  line2 String
+  postal_code String?
+  state String?
 }
 
 
