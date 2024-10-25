@@ -36,19 +36,31 @@ const CheckoutClient = () => {
                     items: cartProducts,
                     payment_intent_id: paymentIntent,
                 })
-            }).then((res) => {
+            })
+            .then((res) => {
                 setLoading(false);
                 if (res.status === 401) {
-                    return router.push('/login')
+                            return router.push('/login')
+                        }
+                if (!res.ok) {
+                    throw new Error(`Failed to create payment intent: ${res.status}`);
                 }
                 return res.json();
-            }).then((data) => {
-                setClientSecret(data.paymentIntent.client_secret);
-                handleSetPaymentIntent(data.paymentIntent.id)
-            }).catch((error) => {
-                setError(true);
-                toast.error('Something went wrong')
             })
+            .then((data) => {
+                if (data.paymentIntent && data.paymentIntent.client_secret) {
+                    setClientSecret(data.paymentIntent.client_secret);
+                    handleSetPaymentIntent(data.paymentIntent.id);
+                } else {
+                    throw new Error("Client secret not found in response");
+                }
+            })
+            .catch((error) => {
+                setError(true);
+                toast.error(`Error: ${error.message}`);
+                console.error("Checkout error:", error);
+            });
+            
         }
 
     }, [cartProducts, handleSetPaymentIntent, paymentIntent, router])
