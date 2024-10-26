@@ -38,16 +38,16 @@ const CheckoutClient = () => {
                 })
             })
             .then((res) => {
+                console.log(res, "This is res");
                 setLoading(false);
                 if (res.status === 401) {
                             return router.push('/login')
                         }
-                if (!res.ok) {
-                    throw new Error(`Failed to create payment intent: ${res.status}`);
-                }
+                
                 return res.json();
             })
             .then((data) => {
+                console.log(data, "This is data");
                 if (data.paymentIntent && data.paymentIntent.client_secret) {
                     setClientSecret(data.paymentIntent.client_secret);
                     handleSetPaymentIntent(data.paymentIntent.id);

@@ -6,12 +6,13 @@ import Stripe from "stripe"
 
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-    apiVersion: '2024-09-30.acacia'
+    apiVersion: '2024-09-30.acacia' 
 })
 
 const calculateOrderAmount = (items: CartProductType[]) => {
     const totalPrice = items.reduce((acc, item) => {
         const itemTotal = item.price * item.quantity;
+        console.log(itemTotal, "Item Total =========================");
 
         return acc + itemTotal;
     }, 0)
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
 
     const body = await request.json()
     const { items, payment_intent_id } = body
-    const total = calculateOrderAmount(items) * 100
+    const total = calculateOrderAmount(items) * 100;
     const orderData = {
         user: { connect: { id: currentUser.id } },
         amount: total,
@@ -43,6 +44,7 @@ export async function POST(request: Request) {
         const current_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
 
         if (current_intent) {
+            console.log(current_intent, "Current intent====================");
             const updated_intent = await stripe.paymentIntents.update(payment_intent_id, { amount: total });
 
             //update the oreder
