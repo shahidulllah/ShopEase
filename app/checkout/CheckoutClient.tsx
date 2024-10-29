@@ -37,30 +37,26 @@ const CheckoutClient = () => {
                     payment_intent_id: paymentIntent,
                 })
             })
-            .then((res) => {
-                console.log(res, "This is res");
-                setLoading(false);
-                if (res.status === 401) {
-                            return router.push('/login')
-                        }
-                
-                return res.json();
-            })
-            .then((data) => {
-                console.log(data, "This is data");
-                if (data.paymentIntent && data.paymentIntent.client_secret) {
-                    setClientSecret(data.paymentIntent.client_secret);
-                    handleSetPaymentIntent(data.paymentIntent.id);
-                } else {
-                    throw new Error("Client secret not found in response");
-                }
-            })
-            .catch((error) => {
-                setError(true);
-                toast.error(`Error: ${error.message}`);
-                console.error("Checkout error:", error);
-            });
-            
+                .then(async (res) => {
+                    setLoading(false);
+                    if (res.status === 401) {
+                        return router.push('/login');
+                    }
+                    const data = await res.json();
+                    console.log(data, "This is data");
+                    if (data.paymentIntent && data.paymentIntent.client_secret) {
+                        setClientSecret(data.paymentIntent.client_secret);
+                        handleSetPaymentIntent(data.paymentIntent.id);
+                    } else {
+                        throw new Error("Client secret not found in response");
+                    }
+                })
+                .catch((error) => {
+                    setError(true);
+                    toast.error(`Error: ${error.message}`);
+                    console.error("Checkout error:", error);
+                });
+
         }
 
     }, [cartProducts, handleSetPaymentIntent, paymentIntent, router])

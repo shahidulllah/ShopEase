@@ -9,14 +9,14 @@ export const config = {
     },
 };
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string, {
     apiVersion: "2024-09-30.acacia",
 });
 
 export default async function handler(
     req: NextApiRequest, 
     res: NextApiResponse) {
-    // if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+    // if (!process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY || !process.env.NEXT_PUBLIC_STRIPE_WEBHOOK_SECRET) {
     //     return res.status(500).json({ error: "Stripe keys not configured properly" });
     // }
 
@@ -33,7 +33,7 @@ export default async function handler(
         event = stripe.webhooks.constructEvent(
             buf, 
             sig, 
-            process.env.STRIPE_WEBHOOK_SECRET!
+            process.env.NEXT_PUBLIC_STRIPE_WEBHOOK_SECRET!
         );
     } catch (err: any) {
         // console.error("Webhook error:", err.message);

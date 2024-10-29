@@ -5,18 +5,18 @@ import { NextResponse } from "next/server"
 import Stripe from "stripe"
 
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-    apiVersion: '2024-09-30.acacia' 
+const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string, {
+    apiVersion: '2024-09-30.acacia'
 })
 
 const calculateOrderAmount = (items: CartProductType[]) => {
     const totalPrice = items.reduce((acc, item) => {
         const itemTotal = item.price * item.quantity;
-        console.log(itemTotal, "Item Total =========================");
+
 
         return acc + itemTotal;
     }, 0)
-    
+
     return totalPrice;
 }
 
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
 
     const body = await request.json()
     const { items, payment_intent_id } = body
-    const total = calculateOrderAmount(items) * 100; 
+    const total = calculateOrderAmount(items) * 100;
     const orderData = {
         user: { connect: { id: currentUser.id } },
         amount: total,
@@ -48,44 +48,44 @@ export async function POST(request: Request) {
             const updated_intent = await stripe.paymentIntents.update(payment_intent_id, { amount: total });
 
             //update the oreder
-            const [existing_order, update_order] = await Promise.all([
-                prisma.order.findFirst({
-                    where: {
-                        paymentIntentId: payment_intent_id},
-                }),
-                prisma.order.update({
-                    where: {paymentIntentId: payment_intent_id},
-                    data: {
-                        amount: total,
-                        products: items,
-                    }
-                })
-            ]);
+            const existing_order = await prisma.order.findFirst({
+                where: { paymentIntentId: payment_intent_id },
+            });
 
             if (!existing_order) {
-                return NextResponse.json({ error: "Invalid Payment Intent" }, { status: 400 })
+                return NextResponse.json({ error: "Order not found for the provided Payment Intent" }, { status: 404 });
             }
+
+            // If an order is found, proceed to update it
+            const updated_order = await prisma.order.update({
+                where: { paymentIntentId: payment_intent_id },
+                data: {
+                    amount: total,
+                    products: items,
+                },
+            });
+
 
             return NextResponse.json({ paymentIntent: updated_intent })
         }
     }
-    else {
-        //create the intent
+    // In case of no existing Payment Intent, create a new one
+    if (!payment_intent_id) {
         const paymentIntent = await stripe.paymentIntents.create({
             amount: total,
             currency: 'usd',
-            automatic_payment_methods: { enabled: true }
-        })
+            automatic_payment_methods: { enabled: true },
+        });
 
-        // create the order
-        orderData.paymentIntentId = paymentIntent.id
+        orderData.paymentIntentId = paymentIntent.id;
 
         await prisma.order.create({
-            data: orderData
-        })
+            data: orderData,
+        });
 
-        return NextResponse.json({ paymentIntent })
+        return NextResponse.json({ paymentIntent });
     }
+
 
 
 }
