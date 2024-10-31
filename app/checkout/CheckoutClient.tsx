@@ -20,8 +20,7 @@ const CheckoutClient = () => {
 
     const router = useRouter()
 
-    console.log("PaymentIntent", paymentIntent);
-    console.log("ClientSecret", clientSecret);
+   
 
     useEffect(() => {
         //create a payment intent as soon as the page loads
@@ -73,6 +72,8 @@ const CheckoutClient = () => {
         setPaymentSuccess(value)
     }, [])
 
+    console.log("PaymentIntent", paymentIntent);
+    console.log("ClientSecret", clientSecret);
     return <div className="w-full">
         {clientSecret && cartProducts && (
             <Elements options={options} stripe={stripePromise}>

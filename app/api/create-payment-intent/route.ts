@@ -44,7 +44,6 @@ export async function POST(request: Request) {
         const current_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
 
         if (current_intent) {
-            console.log(current_intent, "Current intent====================");
             const updated_intent = await stripe.paymentIntents.update(payment_intent_id, { amount: total });
 
             //update the oreder
@@ -65,8 +64,11 @@ export async function POST(request: Request) {
                 },
             });
 
-
+            console.log(updated_intent, "Updated intent==================");
             return NextResponse.json({ paymentIntent: updated_intent })
+            // return NextResponse.json({ paymentIntent: { id: updated_intent.id, client_secret: updated_intent.client_secret } });
+
+
         }
     }
     // In case of no existing Payment Intent, create a new one
