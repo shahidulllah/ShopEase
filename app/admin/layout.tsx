@@ -1,3 +1,4 @@
+import AdminNav from "../Components/admin/AdminNav";
 
 export const metadata = {
     title: "ShopEase Admin",
@@ -7,7 +8,7 @@ export const metadata = {
 const AdminLayout = ({children}: {children: React.ReactNode}) => {
     return (
         <div>
-            <div>Nav</div>
+            <AdminNav/>
             {children}
         </div>
     );
