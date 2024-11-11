@@ -64,6 +64,10 @@ model Order {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model product{
+   id              String            @id @default(auto()) @map("_id") @db.ObjectId
+}
+
  type CartProductType {
     id String
     name String
