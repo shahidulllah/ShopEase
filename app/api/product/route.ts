@@ -25,5 +25,6 @@ export async function POST(request: Request) {
         },
     });
 
+    console.log(product);
     return NextResponse.json(product)
 }
